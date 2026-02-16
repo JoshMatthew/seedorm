@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>protodb studio</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <h1>protodb <span class="dim">studio</span></h1>
+  </header>
+
+  <main>
+    <aside id="sidebar">
+      <h2>Collections</h2>
+      <ul id="collections-list"></ul>
+    </aside>
+
+    <section id="content">
+      <div id="empty-state">
+        <p>Select a collection from the sidebar</p>
+      </div>
+      <div id="collection-view" class="hidden">
+        <div class="toolbar">
+          <h2 id="collection-name"></h2>
+          <span id="doc-count" class="dim"></span>
+          <button id="btn-add" class="btn">+ Add Document</button>
+        </div>
+        <table id="docs-table">
+          <thead><tr id="table-head"></tr></thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Edit Modal -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Edit Document</h3>
+        <button id="modal-close" class="btn-close">&times;</button>
+      </div>
+      <textarea id="doc-editor" rows="20"></textarea>
+      <div class="modal-footer">
+        <button id="btn-save" class="btn btn-primary">Save</button>
+        <button id="btn-delete" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

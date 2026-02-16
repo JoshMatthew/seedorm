@@ -1,0 +1,7 @@
+{
+  "adapter": {
+    "adapter": "json",
+    "path": "./data"
+  },
+  "migrationsDir": "./migrations"
+}
