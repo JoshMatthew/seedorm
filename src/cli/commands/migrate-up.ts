@@ -1,11 +1,11 @@
 import { loadConfig } from "../util/config-loader.js";
 import { logger } from "../util/logger.js";
-import { ProtoDB } from "../../protodb.js";
+import { SeedORM } from "../../seedorm.js";
 import { MigrationEngine } from "../../migration/migration-engine.js";
 
 export async function migrateUpCommand(options: { count?: string }) {
   const config = loadConfig();
-  const db = new ProtoDB(config);
+  const db = new SeedORM(config);
   await db.connect();
 
   const engine = new MigrationEngine(

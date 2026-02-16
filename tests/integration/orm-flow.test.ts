@@ -2,15 +2,15 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as os from "node:os";
-import { ProtoDB } from "../../src/protodb.js";
+import { SeedORM } from "../../src/seedorm.js";
 import { ValidationError, DocumentNotFoundError, UniqueConstraintError } from "../../src/errors.js";
 
 let tmpDir: string;
-let db: ProtoDB;
+let db: SeedORM;
 
 beforeEach(async () => {
-  tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "protodb-orm-"));
-  db = new ProtoDB({ adapter: { adapter: "json", path: tmpDir } });
+  tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "seedorm-orm-"));
+  db = new SeedORM({ adapter: { adapter: "json", path: tmpDir } });
   await db.connect();
 });
 
@@ -19,7 +19,7 @@ afterEach(async () => {
   fs.rmSync(tmpDir, { recursive: true, force: true });
 });
 
-describe("ProtoDB ORM flow", () => {
+describe("SeedORM ORM flow", () => {
   it("creates a model and does CRUD", async () => {
     const User = db.model({
       name: "User",

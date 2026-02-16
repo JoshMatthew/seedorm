@@ -140,7 +140,7 @@ export type AdapterConfig =
   | PostgresAdapterConfig
   | MySQLAdapterConfig;
 
-export interface ProtoDBConfig {
+export interface SeedORMConfig {
   adapter: AdapterConfig;
   migrationsDir?: string;
 }

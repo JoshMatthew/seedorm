@@ -1,24 +1,21 @@
-# protodb
+# seedorm
 
 Development-first ORM that lets you start with a JSON file and migrate to PostgreSQL or MySQL by changing one line of config. No rewrites.
 
 ## Why
 
-Every project starts the same way: you need to store data, but you don't want to set up a database just to prototype. Protodb lets you start building immediately with a local JSON file, then switch to a real database when you're ready — without changing your application code.
+Every project starts the same way: you need to store data, but you don't want to set up a database just to prototype. SeedORM lets you start building immediately with a local JSON file, then switch to a real database when you're ready — without changing your application code.
 
 ## Quick start
 
 ```bash
-git clone https://github.com/example/protodb.git
-cd protodb
-npm install
-npm run build
+npm install seedorm
 ```
 
 ```typescript
-import { ProtoDB } from "protodb";
+import { SeedORM } from "seedorm";
 
-const db = new ProtoDB();
+const db = new SeedORM();
 await db.connect();
 
 const User = db.model({
@@ -74,7 +71,7 @@ Your models, queries, and application logic stay exactly the same.
 - **Zero-config start** — data lives in a JSON file, no database setup needed
 - **Schema validation** — type checking, required fields, unique constraints, min/max, enums
 - **Query operators** — `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, `$nin`, `$like`, `$exists`
-- **CLI tools** — `protodb init`, `protodb start` (REST server), `protodb studio` (visual UI)
+- **CLI tools** — `seedorm init`, `seedorm start` (REST server), `seedorm studio` (visual UI)
 - **Migration engine** — `migrate create`, `migrate up`, `migrate to postgres` (SQL export)
 - **PostgreSQL adapter** — full adapter with parameterized queries, lazy-loaded so `pg` is optional
 - **TypeScript** — written in TypeScript with full type exports, dual CJS/ESM output
@@ -83,27 +80,27 @@ Your models, queries, and application logic stay exactly the same.
 
 ```bash
 # Initialize a project
-protodb init
+npx seedorm init
 
 # Start a REST API dev server (port 4100)
-protodb start
+npx seedorm start
 
 # Launch the visual data browser (port 4200)
-protodb studio
+npx seedorm studio
 
 # Create a migration
-protodb migrate create add-users
+npx seedorm migrate create add-users
 
 # Run pending migrations
-protodb migrate up
+npx seedorm migrate up
 
 # Export JSON data as PostgreSQL SQL
-protodb migrate to postgres --output export.sql
+npx seedorm migrate to postgres --output export.sql
 ```
 
 ## REST API
 
-When running `protodb start`, the following endpoints are available:
+When running `seedorm start`, the following endpoints are available:
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -115,62 +112,12 @@ When running `protodb start`, the following endpoints are available:
 | `PATCH` | `/api/:collection/:id` | Update document |
 | `DELETE` | `/api/:collection/:id` | Delete document |
 
-## Project structure
-
-```
-src/
-├── index.ts                    # Public exports
-├── protodb.ts                  # Main ProtoDB class
-├── types.ts                    # All TypeScript interfaces
-├── errors.ts                   # Error classes
-├── model/
-│   ├── model.ts                # Model class (CRUD + validation)
-│   ├── schema.ts               # Schema parsing + validation
-│   └── field-types.ts          # Type definitions + coercion
-├── adapters/
-│   ├── json/
-│   │   ├── json-adapter.ts     # JSON file adapter
-│   │   ├── file-engine.ts      # Atomic read/write with write queue
-│   │   └── indexer.ts          # In-memory indexes for unique/indexed fields
-│   └── postgres/
-│       ├── postgres-adapter.ts # Full PostgreSQL adapter
-│       ├── pg-query-builder.ts # Parameterized query builder
-│       └── pg-connection.ts    # Connection pool wrapper
-├── query/
-│   ├── operators.ts            # Filter operator implementations
-│   └── filter.ts               # In-memory filter engine
-├── migration/
-│   ├── migration-engine.ts     # Run/track migrations
-│   ├── migration-generator.ts  # Generate migration files
-│   ├── schema-differ.ts        # Diff schemas into migration steps
-│   └── exporters/
-│       └── postgres-exporter.ts # Generate CREATE TABLE + INSERT SQL
-├── cli/
-│   ├── index.ts                # Commander.js program setup
-│   └── commands/               # init, start, studio, migrate:*
-└── studio/
-    ├── server.ts               # HTTP server for studio UI
-    ├── api.ts                  # REST API routes
-    └── static/                 # Vanilla HTML/CSS/JS frontend
-```
-
-## Testing
-
-```bash
-npm test          # 48 tests (unit + integration)
-npm run build     # TypeScript build via tsup
-```
-
 ## Requirements
 
 - Node.js 18+
-- `pg` (optional, only for PostgreSQL adapter)
-- `mysql2` (optional, only for MySQL adapter)
-
-## Status
-
-Early development. The JSON adapter and core ORM are functional and tested. PostgreSQL adapter is implemented but untested against a live database. MySQL adapter is not yet implemented.
+- `pg` (optional, only needed for PostgreSQL adapter)
+- `mysql2` (optional, only needed for MySQL adapter)
 
 ## License
 
-MIT
+Apache 2.0 — see [LICENSE](./LICENSE)

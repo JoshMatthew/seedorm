@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-# Install protodb globally from npm
-echo "Installing protodb..."
-npm install -g protodb
+# Install seedorm globally from npm
+echo "Installing seedorm..."
+npm install -g seedorm
 
-echo "protodb installed! Run 'protodb --help' to get started."
+echo "seedorm installed! Run 'seedorm --help' to get started."

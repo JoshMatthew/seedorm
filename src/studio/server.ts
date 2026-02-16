@@ -2,7 +2,7 @@ import * as http from "node:http";
 import * as path from "node:path";
 import { createApiHandler } from "./api.js";
 import { getStaticContent } from "./static-content.js";
-import type { ProtoDB } from "../protodb.js";
+import type { SeedORM } from "../seedorm.js";
 
 const MIME_TYPES: Record<string, string> = {
   ".html": "text/html",
@@ -34,7 +34,7 @@ function serveStatic(
 }
 
 export function createStudioServer(
-  db: ProtoDB,
+  db: SeedORM,
   port: number,
 ): http.Server {
   const apiHandler = createApiHandler(db);

@@ -11,7 +11,7 @@ export default defineConfig([
     outDir: "dist",
   },
   {
-    entry: ["bin/protodb.ts"],
+    entry: ["bin/seedorm.ts"],
     format: ["cjs"],
     outDir: "dist/bin",
     banner: { js: "#!/usr/bin/env node" },

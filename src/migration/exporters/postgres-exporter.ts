@@ -92,7 +92,7 @@ export function generateExportSQL(
   docs: Document[],
 ): string {
   const parts: string[] = [];
-  parts.push(`-- Export of "${collection}" from protodb`);
+  parts.push(`-- Export of "${collection}" from seedorm`);
   parts.push(`-- Generated at ${new Date().toISOString()}\n`);
   parts.push(generateCreateTableSQL(collection, schema));
   parts.push("");

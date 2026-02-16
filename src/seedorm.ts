@@ -1,21 +1,21 @@
 import type {
   AdapterConfig,
   ModelDefinition,
-  ProtoDBConfig,
+  SeedORMConfig,
   StorageAdapter,
 } from "./types.js";
-import { ProtoDBError } from "./errors.js";
+import { SeedORMError } from "./errors.js";
 import { Model } from "./model/model.js";
 import { JsonAdapter } from "./adapters/json/json-adapter.js";
 import * as path from "node:path";
 
-export class ProtoDB {
-  private config: ProtoDBConfig;
+export class SeedORM {
+  private config: SeedORMConfig;
   private adapter: StorageAdapter | null = null;
   private models = new Map<string, Model>();
   private connected = false;
 
-  constructor(config?: Partial<ProtoDBConfig>) {
+  constructor(config?: Partial<SeedORMConfig>) {
     this.config = {
       adapter: config?.adapter ?? { adapter: "json", path: "./data" },
       migrationsDir: config?.migrationsDir ?? "./migrations",
@@ -27,7 +27,7 @@ export class ProtoDB {
       case "json": {
         const dbPath = path.resolve(
           adapterConfig.path ?? "./data",
-          "protodb.json",
+          "seedorm.json",
         );
         return new JsonAdapter(dbPath);
       }
@@ -36,11 +36,11 @@ export class ProtoDB {
         return new PostgresAdapter(adapterConfig.url);
       }
       case "mysql":
-        throw new ProtoDBError(
+        throw new SeedORMError(
           'MySQL adapter requires the "mysql2" package. Install it with: npm install mysql2',
         );
       default:
-        throw new ProtoDBError(
+        throw new SeedORMError(
           `Unknown adapter: ${(adapterConfig as { adapter: string }).adapter}`,
         );
     }
@@ -71,7 +71,7 @@ export class ProtoDB {
     }
 
     if (!this.adapter) {
-      throw new ProtoDBError(
+      throw new SeedORMError(
         "Not connected. Call db.connect() before defining models.",
       );
     }
@@ -87,12 +87,12 @@ export class ProtoDB {
 
   getAdapter(): StorageAdapter {
     if (!this.adapter) {
-      throw new ProtoDBError("Not connected.");
+      throw new SeedORMError("Not connected.");
     }
     return this.adapter;
   }
 
-  getConfig(): ProtoDBConfig {
+  getConfig(): SeedORMConfig {
     return this.config;
   }
 }

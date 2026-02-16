@@ -10,13 +10,13 @@ export function createCLI(): Command {
   const program = new Command();
 
   program
-    .name("protodb")
+    .name("seedorm")
     .description("Development-first ORM — start with JSON, migrate to PostgreSQL/MySQL")
     .version("0.1.0");
 
   program
     .command("init")
-    .description("Initialize a new protodb project")
+    .description("Initialize a new seedorm project")
     .option("-f, --force", "Overwrite existing config")
     .action(initCommand);
 
@@ -51,7 +51,7 @@ export function createCLI(): Command {
 
   program
     .command("studio")
-    .description("Launch the protodb studio UI")
+    .description("Launch the seedorm studio UI")
     .option("-p, --port <port>", "Port to listen on", "4200")
     .action(studioCommand);
 

@@ -1,9 +1,9 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import type { Migration, MigrationRecord, MigrationStep, NormalizedSchema, StorageAdapter } from "../types.js";
-import { ProtoDBError } from "../errors.js";
+import { SeedORMError } from "../errors.js";
 
-const MIGRATIONS_COLLECTION = "_protodb_migrations";
+const MIGRATIONS_COLLECTION = "_seedorm_migrations";
 
 export class MigrationEngine {
   private adapter: StorageAdapter;

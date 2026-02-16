@@ -1,9 +1,9 @@
 import * as http from "node:http";
-import { ProtoDB } from "../../protodb.js";
+import { SeedORM } from "../../seedorm.js";
 import { loadConfig } from "../util/config-loader.js";
 import { logger } from "../util/logger.js";
 import type { Document, FilterQuery, FindOptions, ModelDefinition } from "../../types.js";
-import { ProtoDBError } from "../../errors.js";
+import { SeedORMError } from "../../errors.js";
 
 function parseBody(req: http.IncomingMessage): Promise<unknown> {
   return new Promise((resolve, reject) => {
@@ -30,7 +30,7 @@ function json(res: http.ServerResponse, status: number, data: unknown) {
 export async function startCommand(options: { port?: string }) {
   const port = parseInt(options.port ?? "4100", 10);
   const config = loadConfig();
-  const db = new ProtoDB(config);
+  const db = new SeedORM(config);
   await db.connect();
 
   logger.success("Connected to database");
@@ -130,14 +130,14 @@ export async function startCommand(options: { port?: string }) {
 
       json(res, 404, { error: "Not found" });
     } catch (err) {
-      const message = err instanceof ProtoDBError ? err.message : "Internal server error";
-      const status = err instanceof ProtoDBError ? 400 : 500;
+      const message = err instanceof SeedORMError ? err.message : "Internal server error";
+      const status = err instanceof SeedORMError ? 400 : 500;
       json(res, status, { error: message });
     }
   });
 
   server.listen(port, () => {
-    logger.header("protodb dev server");
+    logger.header("seedorm dev server");
     logger.info(`Listening on http://localhost:${port}`);
     logger.dim("REST API: GET/POST/PUT/DELETE /api/:collection/:id");
   });

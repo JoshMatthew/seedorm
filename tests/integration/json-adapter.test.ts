@@ -27,7 +27,7 @@ function makeDoc(data: Record<string, unknown>): Document {
 }
 
 beforeEach(async () => {
-  tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "protodb-test-"));
+  tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "seedorm-test-"));
   dbPath = path.join(tmpDir, "db.json");
   adapter = new JsonAdapter(dbPath);
   await adapter.connect();

@@ -1,7 +1,7 @@
 import * as path from "node:path";
 import { loadConfig } from "../util/config-loader.js";
 import { logger } from "../util/logger.js";
-import { ProtoDB } from "../../protodb.js";
+import { SeedORM } from "../../seedorm.js";
 import { MigrationEngine } from "../../migration/migration-engine.js";
 import { generateMigration } from "../../migration/migration-generator.js";
 import type { MigrationStep } from "../../types.js";
@@ -20,7 +20,7 @@ export async function migrateCreateCommand(
   }
 
   const migration = generateMigration(name, steps);
-  const db = new ProtoDB(config);
+  const db = new SeedORM(config);
   await db.connect();
 
   const engine = new MigrationEngine(db.getAdapter(), migrationsDir);

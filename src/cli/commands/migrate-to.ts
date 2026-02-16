@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { loadConfig } from "../util/config-loader.js";
 import { logger } from "../util/logger.js";
-import { ProtoDB } from "../../protodb.js";
+import { SeedORM } from "../../seedorm.js";
 import { normalizeSchema } from "../../model/schema.js";
 import { generateExportSQL } from "../../migration/exporters/postgres-exporter.js";
 import type { Document, NormalizedSchema } from "../../types.js";
@@ -17,7 +17,7 @@ export async function migrateToCommand(
   }
 
   const config = loadConfig();
-  const db = new ProtoDB(config);
+  const db = new SeedORM(config);
   await db.connect();
 
   const adapter = db.getAdapter();
@@ -26,7 +26,7 @@ export async function migrateToCommand(
   // Filter to specific collection if requested
   const toExport = options.collection
     ? collections.filter((c) => c === options.collection)
-    : collections.filter((c) => !c.startsWith("_protodb_"));
+    : collections.filter((c) => !c.startsWith("_seedorm_"));
 
   if (toExport.length === 0) {
     logger.warn("No collections to export");

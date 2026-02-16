@@ -1,7 +1,7 @@
 import * as http from "node:http";
-import type { ProtoDB } from "../protodb.js";
+import type { SeedORM } from "../seedorm.js";
 import type { Document, FilterQuery, FindOptions } from "../types.js";
-import { ProtoDBError } from "../errors.js";
+import { SeedORMError } from "../errors.js";
 import { nanoid } from "nanoid";
 
 function parseBody(req: http.IncomingMessage): Promise<unknown> {
@@ -27,7 +27,7 @@ function json(res: http.ServerResponse, status: number, data: unknown) {
 }
 
 export function createApiHandler(
-  db: ProtoDB,
+  db: SeedORM,
 ): (req: http.IncomingMessage, res: http.ServerResponse) => Promise<void> {
   return async (req, res) => {
     const url = new URL(req.url ?? "/", "http://localhost");
@@ -41,7 +41,7 @@ export function createApiHandler(
         const cols = await adapter.listCollections();
         const result = [];
         for (const col of cols) {
-          if (col.startsWith("_protodb_")) continue;
+          if (col.startsWith("_seedorm_")) continue;
           const count = await adapter.count(col);
           result.push({ name: col, count });
         }
@@ -107,8 +107,8 @@ export function createApiHandler(
 
       json(res, 404, { error: "Not found" });
     } catch (err) {
-      const message = err instanceof ProtoDBError ? err.message : "Internal server error";
-      const status = err instanceof ProtoDBError ? 400 : 500;
+      const message = err instanceof SeedORMError ? err.message : "Internal server error";
+      const status = err instanceof SeedORMError ? 400 : 500;
       json(res, status, { error: message });
     }
   };

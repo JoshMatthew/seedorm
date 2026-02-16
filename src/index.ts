@@ -1,4 +1,4 @@
-export { ProtoDB } from "./protodb.js";
+export { SeedORM } from "./seedorm.js";
 export { Model } from "./model/model.js";
 export { JsonAdapter } from "./adapters/json/json-adapter.js";
 export { PostgresAdapter } from "./adapters/postgres/postgres-adapter.js";
@@ -15,7 +15,7 @@ export type {
   ModelDefinition,
   NormalizedField,
   NormalizedSchema,
-  ProtoDBConfig,
+  SeedORMConfig,
   SchemaDefinition,
   SortOption,
   StorageAdapter,
@@ -28,7 +28,7 @@ export type {
 
 // Errors
 export {
-  ProtoDBError,
+  SeedORMError,
   ValidationError,
   AdapterError,
   CollectionNotFoundError,

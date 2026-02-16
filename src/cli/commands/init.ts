@@ -21,9 +21,9 @@ export function initCommand(options: { force?: boolean }) {
     return;
   }
 
-  const configPath = path.join(cwd, "protodb.config.json");
+  const configPath = path.join(cwd, "seedorm.config.json");
   fs.writeFileSync(configPath, JSON.stringify(DEFAULT_CONFIG, null, 2) + "\n");
-  logger.success("Created protodb.config.json");
+  logger.success("Created seedorm.config.json");
 
   // Create data directory
   const dataDir = path.join(cwd, "data");
@@ -39,5 +39,5 @@ export function initCommand(options: { force?: boolean }) {
     logger.success("Created migrations/ directory");
   }
 
-  logger.info("Run `protodb start` to launch the dev server");
+  logger.info("Run `seedorm start` to launch the dev server");
 }

@@ -1,11 +1,11 @@
-export class ProtoDBError extends Error {
+export class SeedORMError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "ProtoDBError";
+    this.name = "SeedORMError";
   }
 }
 
-export class ValidationError extends ProtoDBError {
+export class ValidationError extends SeedORMError {
   public field: string;
   public reason: string;
 
@@ -17,7 +17,7 @@ export class ValidationError extends ProtoDBError {
   }
 }
 
-export class AdapterError extends ProtoDBError {
+export class AdapterError extends SeedORMError {
   public adapter: string;
 
   constructor(adapter: string, message: string) {
@@ -27,21 +27,21 @@ export class AdapterError extends ProtoDBError {
   }
 }
 
-export class CollectionNotFoundError extends ProtoDBError {
+export class CollectionNotFoundError extends SeedORMError {
   constructor(collection: string) {
     super(`Collection "${collection}" not found`);
     this.name = "CollectionNotFoundError";
   }
 }
 
-export class DocumentNotFoundError extends ProtoDBError {
+export class DocumentNotFoundError extends SeedORMError {
   constructor(collection: string, id: string) {
     super(`Document "${id}" not found in "${collection}"`);
     this.name = "DocumentNotFoundError";
   }
 }
 
-export class UniqueConstraintError extends ProtoDBError {
+export class UniqueConstraintError extends SeedORMError {
   public field: string;
   public value: unknown;
 

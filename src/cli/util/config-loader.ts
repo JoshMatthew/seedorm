@@ -1,10 +1,10 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { ProtoDBConfig } from "../../types.js";
+import type { SeedORMConfig } from "../../types.js";
 
 const CONFIG_FILENAMES = [
-  "protodb.config.json",
-  "protodb.json",
+  "seedorm.config.json",
+  "seedorm.json",
 ];
 
 export function findConfigFile(cwd: string = process.cwd()): string | null {
@@ -15,7 +15,7 @@ export function findConfigFile(cwd: string = process.cwd()): string | null {
   return null;
 }
 
-export function loadConfig(cwd: string = process.cwd()): ProtoDBConfig {
+export function loadConfig(cwd: string = process.cwd()): SeedORMConfig {
   const configPath = findConfigFile(cwd);
 
   if (!configPath) {
@@ -27,7 +27,7 @@ export function loadConfig(cwd: string = process.cwd()): ProtoDBConfig {
   }
 
   const raw = fs.readFileSync(configPath, "utf-8");
-  const parsed = JSON.parse(raw) as ProtoDBConfig;
+  const parsed = JSON.parse(raw) as SeedORMConfig;
 
   return {
     adapter: parsed.adapter ?? { adapter: "json", path: "./data" },
