@@ -5,13 +5,13 @@ import { logger } from "../util/logger.js";
 import { SeedORM } from "../../seedorm.js";
 import { normalizeSchema } from "../../model/schema.js";
 import { generateExportSQL } from "../../migration/exporters/postgres-exporter.js";
-import type { Document, NormalizedSchema } from "../../types.js";
+import { AdapterType, FieldType, type Document, type NormalizedSchema } from "../../types.js";
 
 export async function migrateToCommand(
   target: string,
   options: { output?: string; collection?: string },
 ) {
-  if (target !== "postgres") {
+  if (target !== AdapterType.Postgres) {
     logger.error(`Unsupported target: ${target}. Currently only "postgres" is supported.`);
     return;
   }
@@ -79,17 +79,17 @@ function inferSchemaFromDocs(docs: Document[]): NormalizedSchema {
   return schema;
 }
 
-function inferType(value: unknown): "string" | "number" | "boolean" | "json" | "array" | "date" {
-  if (value === null || value === undefined) return "string";
-  if (typeof value === "boolean") return "boolean";
-  if (typeof value === "number") return "number";
-  if (Array.isArray(value)) return "array";
-  if (typeof value === "object") return "json";
+function inferType(value: unknown): FieldType {
+  if (value === null || value === undefined) return FieldType.String;
+  if (typeof value === "boolean") return FieldType.Boolean;
+  if (typeof value === "number") return FieldType.Number;
+  if (Array.isArray(value)) return FieldType.Array;
+  if (typeof value === "object") return FieldType.Json;
   if (typeof value === "string") {
     if (!Number.isNaN(Date.parse(value)) && /^\d{4}-\d{2}-\d{2}/.test(value)) {
-      return "date";
+      return FieldType.Date;
     }
-    return "string";
+    return FieldType.String;
   }
-  return "string";
+  return FieldType.String;
 }

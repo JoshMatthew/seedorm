@@ -1,8 +1,9 @@
-import type {
-  AdapterConfig,
-  ModelDefinition,
-  SeedORMConfig,
-  StorageAdapter,
+import {
+  AdapterType,
+  type AdapterConfig,
+  type ModelDefinition,
+  type SeedORMConfig,
+  type StorageAdapter,
 } from "./types.js";
 import { SeedORMError } from "./errors.js";
 import { Model } from "./model/model.js";
@@ -17,25 +18,25 @@ export class SeedORM {
 
   constructor(config?: Partial<SeedORMConfig>) {
     this.config = {
-      adapter: config?.adapter ?? { adapter: "json", path: "./data" },
+      adapter: config?.adapter ?? { adapter: AdapterType.Json, path: "./data" },
       migrationsDir: config?.migrationsDir ?? "./migrations",
     };
   }
 
   private async createAdapter(adapterConfig: AdapterConfig): Promise<StorageAdapter> {
     switch (adapterConfig.adapter) {
-      case "json": {
+      case AdapterType.Json: {
         const dbPath = path.resolve(
           adapterConfig.path ?? "./data",
           "seedorm.json",
         );
         return new JsonAdapter(dbPath);
       }
-      case "postgres": {
+      case AdapterType.Postgres: {
         const { PostgresAdapter } = await import("./adapters/postgres/postgres-adapter.js");
         return new PostgresAdapter(adapterConfig.url);
       }
-      case "mysql":
+      case AdapterType.MySQL:
         throw new SeedORMError(
           'MySQL adapter requires the "mysql2" package. Install it with: npm install mysql2',
         );
@@ -76,7 +77,7 @@ export class SeedORM {
       );
     }
 
-    const model = new Model(definition, this.adapter);
+    const model = new Model(definition, this.adapter, this);
     this.models.set(definition.name, model);
     return model;
   }

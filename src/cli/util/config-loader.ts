@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { SeedORMConfig } from "../../types.js";
+import { AdapterType, type SeedORMConfig } from "../../types.js";
 
 const CONFIG_FILENAMES = [
   "seedorm.config.json",
@@ -21,7 +21,7 @@ export function loadConfig(cwd: string = process.cwd()): SeedORMConfig {
   if (!configPath) {
     // Return default config
     return {
-      adapter: { adapter: "json", path: "./data" },
+      adapter: { adapter: AdapterType.Json, path: "./data" },
       migrationsDir: "./migrations",
     };
   }
@@ -30,7 +30,7 @@ export function loadConfig(cwd: string = process.cwd()): SeedORMConfig {
   const parsed = JSON.parse(raw) as SeedORMConfig;
 
   return {
-    adapter: parsed.adapter ?? { adapter: "json", path: "./data" },
+    adapter: parsed.adapter ?? { adapter: AdapterType.Json, path: "./data" },
     migrationsDir: parsed.migrationsDir ?? "./migrations",
   };
 }

@@ -1,9 +1,9 @@
-import type {
-  FieldDefinition,
+import {
   FieldType,
-  NormalizedField,
-  NormalizedSchema,
-  SchemaDefinition,
+  type FieldDefinition,
+  type NormalizedField,
+  type NormalizedSchema,
+  type SchemaDefinition,
 } from "../types.js";
 import { ValidationError } from "../errors.js";
 import { coerceFieldValue, validateFieldType } from "./field-types.js";

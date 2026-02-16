@@ -2,10 +2,11 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { logger } from "../util/logger.js";
 import { findConfigFile } from "../util/config-loader.js";
+import { AdapterType } from "../../types.js";
 
 const DEFAULT_CONFIG = {
   adapter: {
-    adapter: "json",
+    adapter: AdapterType.Json,
     path: "./data",
   },
   migrationsDir: "./migrations",

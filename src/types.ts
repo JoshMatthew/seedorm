@@ -1,12 +1,13 @@
 // ── Field & Schema Types ──
 
-export type FieldType =
-  | "string"
-  | "number"
-  | "boolean"
-  | "date"
-  | "json"
-  | "array";
+export enum FieldType {
+  String = "string",
+  Number = "number",
+  Boolean = "boolean",
+  Date = "date",
+  Json = "json",
+  Array = "array",
+}
 
 export interface FieldDefinition {
   type: FieldType;
@@ -81,6 +82,28 @@ export interface FindOptions {
   sort?: SortOption;
   limit?: number;
   offset?: number;
+  include?: string[];
+}
+
+// ── Relations ──
+
+export enum RelationType {
+  HasOne = "hasOne",
+  HasMany = "hasMany",
+  BelongsTo = "belongsTo",
+  ManyToMany = "manyToMany",
+}
+
+export interface RelationDefinition {
+  type: RelationType;
+  model: string;
+  foreignKey: string;
+  joinCollection?: string;
+  relatedKey?: string;
+}
+
+export interface RelationsDefinition {
+  [name: string]: RelationDefinition;
 }
 
 // ── Model Definition ──
@@ -91,6 +114,7 @@ export interface ModelDefinition {
   schema: SchemaDefinition;
   timestamps?: boolean;
   prefix?: string;
+  relations?: RelationsDefinition;
 }
 
 // ── Storage Adapter ──
@@ -118,20 +142,24 @@ export interface StorageAdapter {
 
 // ── Config ──
 
-export type AdapterType = "json" | "postgres" | "mysql";
+export enum AdapterType {
+  Json = "json",
+  Postgres = "postgres",
+  MySQL = "mysql",
+}
 
 export interface JsonAdapterConfig {
-  adapter: "json";
+  adapter: AdapterType.Json;
   path?: string;
 }
 
 export interface PostgresAdapterConfig {
-  adapter: "postgres";
+  adapter: AdapterType.Postgres;
   url: string;
 }
 
 export interface MySQLAdapterConfig {
-  adapter: "mysql";
+  adapter: AdapterType.MySQL;
   url: string;
 }
 

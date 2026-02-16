@@ -1,4 +1,4 @@
-import type { FieldType } from "../types.js";
+import { FieldType } from "../types.js";
 
 export function validateFieldType(
   value: unknown,
@@ -7,28 +7,28 @@ export function validateFieldType(
   if (value === undefined || value === null) return null; // handled by required check
 
   switch (type) {
-    case "string":
+    case FieldType.String:
       if (typeof value !== "string") return `expected string, got ${typeof value}`;
       break;
-    case "number":
+    case FieldType.Number:
       if (typeof value !== "number" || Number.isNaN(value))
         return `expected number, got ${typeof value}`;
       break;
-    case "boolean":
+    case FieldType.Boolean:
       if (typeof value !== "boolean")
         return `expected boolean, got ${typeof value}`;
       break;
-    case "date":
+    case FieldType.Date:
       if (typeof value === "string") {
         if (Number.isNaN(Date.parse(value))) return `invalid date string`;
       } else if (!(value instanceof Date)) {
         return `expected date string or Date, got ${typeof value}`;
       }
       break;
-    case "json":
+    case FieldType.Json:
       // Any non-undefined value is valid JSON
       break;
-    case "array":
+    case FieldType.Array:
       if (!Array.isArray(value)) return `expected array, got ${typeof value}`;
       break;
     default:
@@ -41,7 +41,7 @@ export function validateFieldType(
 export function coerceFieldValue(value: unknown, type: FieldType): unknown {
   if (value === undefined || value === null) return value;
 
-  if (type === "date" && value instanceof Date) {
+  if (type === FieldType.Date && value instanceof Date) {
     return value.toISOString();
   }
 

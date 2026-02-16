@@ -13,7 +13,7 @@ npm install seedorm
 ```
 
 ```typescript
-import { SeedORM } from "seedorm";
+import { SeedORM, FieldType } from "seedorm";
 
 const db = new SeedORM();
 await db.connect();
@@ -22,9 +22,9 @@ const User = db.model({
   name: "User",
   collection: "users",
   schema: {
-    name:  { type: "string", required: true },
-    email: { type: "string", unique: true },
-    role:  { type: "string", enum: ["admin", "user"], default: "user" },
+    name:  { type: FieldType.String, required: true },
+    email: { type: FieldType.String, unique: true },
+    role:  { type: FieldType.String, enum: ["admin", "user"], default: "user" },
   },
 });
 await User.init();
@@ -48,6 +48,51 @@ await User.delete(alice.id);
 await db.disconnect();
 ```
 
+## Relations
+
+Define relationships between models and populate them at query time.
+
+```typescript
+import { SeedORM, FieldType, RelationType } from "seedorm";
+
+const User = db.model({
+  name: "User",
+  collection: "users",
+  schema: {
+    name:  { type: FieldType.String, required: true },
+    email: { type: FieldType.String, unique: true },
+  },
+  relations: {
+    posts:   { type: RelationType.HasMany, model: "Post", foreignKey: "authorId" },
+    profile: { type: RelationType.HasOne, model: "Profile", foreignKey: "userId" },
+    roles:   { type: RelationType.ManyToMany, model: "Role", joinCollection: "user_roles", foreignKey: "userId", relatedKey: "roleId" },
+  },
+});
+
+const Post = db.model({
+  name: "Post",
+  collection: "posts",
+  schema: {
+    title:    { type: FieldType.String, required: true },
+    authorId: { type: FieldType.String, required: true },
+  },
+  relations: {
+    author: { type: RelationType.BelongsTo, model: "User", foreignKey: "authorId" },
+  },
+});
+
+// Populate relations with include
+const user = await User.findById("usr_abc123", {
+  include: ["posts", "profile", "roles"],
+});
+
+// Manage many-to-many links
+await User.associate("roles", "usr_abc123", "rol_editor");
+await User.dissociate("roles", "usr_abc123", "rol_editor");
+```
+
+**Relation types:** `hasOne`, `hasMany`, `belongsTo`, `manyToMany`
+
 ## Switch to a real database
 
 Change your config. That's it.
@@ -66,10 +111,21 @@ Change your config. That's it.
 
 Your models, queries, and application logic stay exactly the same. SeedORM currently supports PostgreSQL, with MySQL, SQLite, and more adapters coming soon.
 
+## Enums
+
+SeedORM exports string enums for type-safe definitions. Plain strings also work since the enums are string-backed.
+
+| Enum | Values |
+|------|--------|
+| `FieldType` | `String`, `Number`, `Boolean`, `Date`, `Json`, `Array` |
+| `RelationType` | `HasOne`, `HasMany`, `BelongsTo`, `ManyToMany` |
+| `AdapterType` | `Json`, `Postgres`, `MySQL` |
+
 ## Features
 
 - **Zero-config start** — data lives in a JSON file, no database setup needed
 - **Schema validation** — type checking, required fields, unique constraints, min/max, enums
+- **Relations** — `hasOne`, `hasMany`, `belongsTo`, `manyToMany` with eager loading via `include`
 - **Query operators** — `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, `$nin`, `$like`, `$exists`
 - **CLI tools** — `seedorm init`, `seedorm start` (REST server), `seedorm studio` (visual UI)
 - **Migration engine** — `migrate create`, `migrate up`, `migrate to` (SQL export)

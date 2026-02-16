@@ -1,10 +1,11 @@
-import type {
-  Document,
-  FilterQuery,
-  FindOptions,
-  NormalizedField,
-  NormalizedSchema,
-  StorageAdapter,
+import {
+  FieldType,
+  type Document,
+  type FilterQuery,
+  type FindOptions,
+  type NormalizedField,
+  type NormalizedSchema,
+  type StorageAdapter,
 } from "../../types.js";
 import { CollectionNotFoundError } from "../../errors.js";
 import { PgConnection } from "./pg-connection.js";
@@ -12,16 +13,16 @@ import { buildSelect, buildCount } from "./pg-query-builder.js";
 
 function fieldToSQLType(field: NormalizedField): string {
   switch (field.type) {
-    case "string":
+    case FieldType.String:
       return field.maxLength ? `VARCHAR(${field.maxLength})` : "TEXT";
-    case "number":
+    case FieldType.Number:
       return "DOUBLE PRECISION";
-    case "boolean":
+    case FieldType.Boolean:
       return "BOOLEAN";
-    case "date":
+    case FieldType.Date:
       return "TIMESTAMPTZ";
-    case "json":
-    case "array":
+    case FieldType.Json:
+    case FieldType.Array:
       return "JSONB";
     default:
       return "TEXT";
