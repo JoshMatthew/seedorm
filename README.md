@@ -1,6 +1,6 @@
 # seedorm
 
-Development-first ORM that lets you start with a JSON file and migrate to PostgreSQL or MySQL by changing one line of config. No rewrites.
+Development-first ORM that lets you start with a JSON file and migrate to any SQL database by changing one line of config. No rewrites.
 
 ## Why
 
@@ -48,7 +48,7 @@ await User.delete(alice.id);
 await db.disconnect();
 ```
 
-## Switch to PostgreSQL
+## Switch to a real database
 
 Change your config. That's it.
 
@@ -64,7 +64,7 @@ Change your config. That's it.
 }
 ```
 
-Your models, queries, and application logic stay exactly the same.
+Your models, queries, and application logic stay exactly the same. SeedORM currently supports PostgreSQL, with MySQL, SQLite, and more adapters coming soon.
 
 ## Features
 
@@ -72,8 +72,8 @@ Your models, queries, and application logic stay exactly the same.
 - **Schema validation** — type checking, required fields, unique constraints, min/max, enums
 - **Query operators** — `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, `$nin`, `$like`, `$exists`
 - **CLI tools** — `seedorm init`, `seedorm start` (REST server), `seedorm studio` (visual UI)
-- **Migration engine** — `migrate create`, `migrate up`, `migrate to postgres` (SQL export)
-- **PostgreSQL adapter** — full adapter with parameterized queries, lazy-loaded so `pg` is optional
+- **Migration engine** — `migrate create`, `migrate up`, `migrate to` (SQL export)
+- **Pluggable adapters** — PostgreSQL built-in, MySQL and SQLite coming soon. Drivers are lazy-loaded and optional.
 - **TypeScript** — written in TypeScript with full type exports, dual CJS/ESM output
 
 ## CLI
@@ -94,7 +94,7 @@ npx seedorm migrate create add-users
 # Run pending migrations
 npx seedorm migrate up
 
-# Export JSON data as PostgreSQL SQL
+# Export JSON data as SQL
 npx seedorm migrate to postgres --output export.sql
 ```
 
