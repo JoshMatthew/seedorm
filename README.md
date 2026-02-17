@@ -1,10 +1,10 @@
 # seedorm
 
-Development-first ORM that lets you start with a JSON file and migrate to any SQL database by changing one line of config. No rewrites.
+Development-first ORM that lets you start with a JSON file and migrate to any SQL database by changing one line of config. No rewrites. No drama.
 
 ## Why
 
-Every project starts the same way: you need to store data, but you don't want to set up a database just to prototype. SeedORM lets you start building immediately with a local JSON file, then switch to a real database when you're ready — without changing your application code.
+Every project starts the same way: you need to store data, but you don't want to set up a database just to prototype. SeedORM lets you start building immediately with a local JSON file, then switch to a real database when you're ready. Your application code doesn't change. Not one line.
 
 ## Quick start
 
@@ -15,37 +15,41 @@ npm install seedorm
 ```typescript
 import { SeedORM, FieldType } from "seedorm";
 
-const db = new SeedORM();
-await db.connect();
+async function main() {
+  const db = new SeedORM();
+  await db.connect();
 
-const User = db.model({
-  name: "User",
-  collection: "users",
-  schema: {
-    name:  { type: FieldType.String, required: true },
-    email: { type: FieldType.String, unique: true },
-    role:  { type: FieldType.String, enum: ["admin", "user"], default: "user" },
-  },
-});
-await User.init();
+  const User = db.model({
+    name: "User",
+    collection: "users",
+    schema: {
+      name:  { type: FieldType.String, required: true },
+      email: { type: FieldType.String, unique: true },
+      role:  { type: FieldType.String, enum: ["admin", "user"], default: "user" },
+    },
+  });
+  await User.init();
 
-// Create
-const alice = await User.create({ name: "Alice", email: "alice@example.com" });
+  // Create
+  const alice = await User.create({ name: "Alice", email: "alice@example.com" });
 
-// Query with MongoDB-style operators
-const admins = await User.find({
-  filter: { role: { $eq: "admin" } },
-  sort: { name: 1 },
-  limit: 10,
-});
+  // Query with MongoDB-style operators
+  const admins = await User.find({
+    filter: { role: { $eq: "admin" } },
+    sort: { name: 1 },
+    limit: 10,
+  });
 
-// Update
-await User.update(alice.id, { role: "admin" });
+  // Update
+  await User.update(alice.id, { role: "admin" });
 
-// Delete
-await User.delete(alice.id);
+  // Delete
+  await User.delete(alice.id);
 
-await db.disconnect();
+  await db.disconnect();
+}
+
+main();
 ```
 
 ## Relations
@@ -123,14 +127,14 @@ SeedORM exports string enums for type-safe definitions. Plain strings also work 
 
 ## Features
 
-- **Zero-config start** — data lives in a JSON file, no database setup needed
-- **Schema validation** — type checking, required fields, unique constraints, min/max, enums
-- **Relations** — `hasOne`, `hasMany`, `belongsTo`, `manyToMany` with eager loading via `include`
-- **Query operators** — `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, `$nin`, `$like`, `$exists`
-- **CLI tools** — `seedorm init`, `seedorm start` (REST server), `seedorm studio` (visual UI)
-- **Migration engine** — `migrate create`, `migrate up`, `migrate to` (SQL export)
-- **Pluggable adapters** — PostgreSQL built-in, MySQL and SQLite coming soon. Drivers are lazy-loaded and optional.
-- **TypeScript** — written in TypeScript with full type exports, dual CJS/ESM output
+- **Zero-config start**: data lives in a JSON file, no database setup needed
+- **Schema validation**: type checking, required fields, unique constraints, min/max, enums
+- **Relations**: `hasOne`, `hasMany`, `belongsTo`, `manyToMany` with eager loading via `include`
+- **Query operators**: `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, `$nin`, `$like`, `$exists`
+- **CLI tools**: `seedorm init`, `seedorm start` (REST server), `seedorm studio` (visual UI)
+- **Migration engine**: `migrate create`, `migrate up`, `migrate to` (SQL export)
+- **Pluggable adapters**: PostgreSQL built-in, MySQL and SQLite coming soon. Drivers are lazy-loaded and optional.
+- **TypeScript**: written in TypeScript with full type exports, dual CJS/ESM output
 
 ## CLI
 
@@ -174,6 +178,14 @@ When running `seedorm start`, the following endpoints are available:
 - `pg` (optional, only needed for PostgreSQL adapter)
 - `mysql2` (optional, only needed for MySQL adapter)
 
+## Links
+
+- [Documentation](https://seedorm.io/docs)
+- [Getting Started](https://seedorm.io/docs/getting-started)
+- [API Reference](https://seedorm.io/docs/api)
+- [CLI Reference](https://seedorm.io/docs/cli)
+- [Tutorial](https://seedorm.io/docs/tutorial)
+
 ## License
 
-Apache 2.0 — see [LICENSE](./LICENSE)
+Apache 2.0
