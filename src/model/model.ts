@@ -41,6 +41,13 @@ export class Model {
 
   async init(): Promise<void> {
     await this.adapter.createCollection(this.collection, this.schema);
+
+    // Create join collections for manyToMany relations
+    for (const rel of Object.values(this.relations)) {
+      if (rel.type === RelationType.ManyToMany && rel.joinCollection) {
+        await this.adapter.createCollection(rel.joinCollection, {});
+      }
+    }
   }
 
   private generateId(): string {

@@ -91,8 +91,8 @@ const user = await User.findById("usr_abc123", {
 });
 
 // Manage many-to-many links
-await User.associate("roles", "usr_abc123", "rol_editor");
-await User.dissociate("roles", "usr_abc123", "rol_editor");
+await User.associate("usr_abc123", "roles", "rol_editor");
+await User.dissociate("usr_abc123", "roles", "rol_editor");
 ```
 
 **Relation types:** `hasOne`, `hasMany`, `belongsTo`, `manyToMany`
@@ -169,7 +169,7 @@ When running `seedorm start`, the following endpoints are available:
 | `GET` | `/api/:collection` | List documents (supports `?filter=`, `?sort=`, `?limit=`, `?offset=`) |
 | `GET` | `/api/:collection/:id` | Get document by ID |
 | `POST` | `/api/:collection` | Create document |
-| `PATCH` | `/api/:collection/:id` | Update document |
+| `PUT/PATCH` | `/api/:collection/:id` | Update document |
 | `DELETE` | `/api/:collection/:id` | Delete document |
 
 ## Requirements

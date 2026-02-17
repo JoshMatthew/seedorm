@@ -12,7 +12,7 @@ export function createCLI(): Command {
   program
     .name("seedorm")
     .description("Development-first ORM — start with JSON, migrate to PostgreSQL/MySQL")
-    .version("0.1.0");
+    .version("0.2.1");
 
   program
     .command("init")
