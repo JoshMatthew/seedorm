@@ -1,6 +1,11 @@
 const API = '/api';
+const PAGE_SIZE = 50;
 let currentCollection = null;
 let currentDoc = null;
+let currentPage = 0;
+let totalDocs = 0;
+let searchQuery = '';
+let searchTimer = null;
 
 async function api(path, opts = {}) {
   const res = await fetch(`${API}${path}`, {
@@ -25,6 +30,9 @@ async function loadCollections() {
 
 async function selectCollection(name) {
   currentCollection = name;
+  currentPage = 0;
+  searchQuery = '';
+  document.getElementById('search-input').value = '';
   document.getElementById('empty-state').classList.add('hidden');
   document.getElementById('collection-view').classList.remove('hidden');
   document.getElementById('collection-name').textContent = name;
@@ -34,15 +42,21 @@ async function selectCollection(name) {
 
 async function loadDocuments() {
   if (!currentCollection) return;
-  const { data, total } = await api(`/data/${currentCollection}?limit=100`);
+  const offset = currentPage * PAGE_SIZE;
+  let url = `/data/${currentCollection}?limit=${PAGE_SIZE}&offset=${offset}`;
+  if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
+
+  const { data, total } = await api(url);
+  totalDocs = total;
   document.getElementById('doc-count').textContent = `${total} documents`;
 
   const thead = document.getElementById('table-head');
   const tbody = document.getElementById('table-body');
 
   if (!data || data.length === 0) {
-    thead.innerHTML = '<th>No documents</th>';
+    thead.innerHTML = `<th>${searchQuery ? 'No matching documents' : 'No documents'}</th>`;
     tbody.innerHTML = '';
+    updatePagination();
     return;
   }
 
@@ -63,6 +77,23 @@ async function loadDocuments() {
   tbody.querySelectorAll('tr').forEach(tr => {
     tr.onclick = () => editDocument(data.find(d => d.id === tr.dataset.id));
   });
+
+  updatePagination();
+}
+
+function updatePagination() {
+  const totalPages = Math.max(1, Math.ceil(totalDocs / PAGE_SIZE));
+  const pag = document.getElementById('pagination');
+
+  if (totalPages <= 1) {
+    pag.classList.add('hidden');
+    return;
+  }
+
+  pag.classList.remove('hidden');
+  document.getElementById('page-info').textContent = `Page ${currentPage + 1} of ${totalPages}`;
+  document.getElementById('btn-prev').disabled = currentPage === 0;
+  document.getElementById('btn-next').disabled = currentPage >= totalPages - 1;
 }
 
 function editDocument(doc) {
@@ -120,6 +151,23 @@ document.getElementById('btn-delete').onclick = deleteDocument;
 document.getElementById('modal-close').onclick = closeModal;
 document.getElementById('modal').onclick = (e) => {
   if (e.target === document.getElementById('modal')) closeModal();
+};
+
+document.getElementById('btn-prev').onclick = () => {
+  if (currentPage > 0) { currentPage--; loadDocuments(); }
+};
+document.getElementById('btn-next').onclick = () => {
+  const totalPages = Math.ceil(totalDocs / PAGE_SIZE);
+  if (currentPage < totalPages - 1) { currentPage++; loadDocuments(); }
+};
+
+document.getElementById('search-input').oninput = (e) => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    searchQuery = e.target.value.trim();
+    currentPage = 0;
+    loadDocuments();
+  }, 250);
 };
 
 // Initial load

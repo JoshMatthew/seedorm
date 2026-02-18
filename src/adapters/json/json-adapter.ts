@@ -15,8 +15,8 @@ export class JsonAdapter implements StorageAdapter {
   private indexer = new Indexer();
   private schemas = new Map<string, NormalizedSchema>();
 
-  constructor(filePath: string) {
-    this.engine = new FileEngine(filePath);
+  constructor(dirPath: string) {
+    this.engine = new FileEngine(dirPath);
   }
 
   async connect(): Promise<void> {
@@ -67,7 +67,7 @@ export class JsonAdapter implements StorageAdapter {
     this.indexer.onInsert(collection, doc);
 
     docs.push(doc);
-    this.engine.markDirty();
+    this.engine.markDirty(collection);
     await this.engine.flush();
     return doc;
   }
@@ -109,7 +109,7 @@ export class JsonAdapter implements StorageAdapter {
     this.indexer.onUpdate(collection, oldDoc, newDoc);
 
     docs[index] = newDoc;
-    this.engine.markDirty();
+    this.engine.markDirty(collection);
     await this.engine.flush();
     return newDoc;
   }
@@ -121,7 +121,7 @@ export class JsonAdapter implements StorageAdapter {
 
     this.indexer.onDelete(collection, docs[index]!);
     docs.splice(index, 1);
-    this.engine.markDirty();
+    this.engine.markDirty(collection);
     await this.engine.flush();
     return true;
   }
@@ -146,7 +146,7 @@ export class JsonAdapter implements StorageAdapter {
     docs.push(...remaining);
 
     if (deleted > 0) {
-      this.engine.markDirty();
+      this.engine.markDirty(collection);
       await this.engine.flush();
     }
 

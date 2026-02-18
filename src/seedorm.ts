@@ -26,11 +26,8 @@ export class SeedORM {
   private async createAdapter(adapterConfig: AdapterConfig): Promise<StorageAdapter> {
     switch (adapterConfig.adapter) {
       case AdapterType.Json: {
-        const dbPath = path.resolve(
-          adapterConfig.path ?? "./data",
-          "seedorm.json",
-        );
-        return new JsonAdapter(dbPath);
+        const dirPath = path.resolve(adapterConfig.path ?? "./data");
+        return new JsonAdapter(dirPath);
       }
       case AdapterType.Postgres: {
         const { PostgresAdapter } = await import("./adapters/postgres/postgres-adapter.js");

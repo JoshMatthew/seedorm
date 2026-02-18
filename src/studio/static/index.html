@@ -25,12 +25,20 @@
         <div class="toolbar">
           <h2 id="collection-name"></h2>
           <span id="doc-count" class="dim"></span>
-          <button id="btn-add" class="btn">+ Add Document</button>
+          <div class="toolbar-right">
+            <input type="text" id="search-input" placeholder="Search..." autocomplete="off">
+            <button id="btn-add" class="btn">+ Add Document</button>
+          </div>
         </div>
         <table id="docs-table">
           <thead><tr id="table-head"></tr></thead>
           <tbody id="table-body"></tbody>
         </table>
+        <div id="pagination" class="pagination hidden">
+          <button id="btn-prev" class="btn">&larr; Prev</button>
+          <span id="page-info" class="dim"></span>
+          <button id="btn-next" class="btn">Next &rarr;</button>
+        </div>
       </div>
     </section>
   </main>

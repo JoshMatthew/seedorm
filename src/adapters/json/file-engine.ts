@@ -3,84 +3,98 @@ import * as path from "node:path";
 import writeFileAtomic from "write-file-atomic";
 import type { Document } from "../../types.js";
 
-export interface FileData {
-  [collection: string]: Document[];
-}
-
 export class FileEngine {
-  private filePath: string;
-  private data: FileData = {};
+  private dirPath: string;
+  private data: Map<string, Document[]> = new Map();
+  private dirty: Set<string> = new Set();
   private writeQueue: Promise<void> = Promise.resolve();
-  private dirty = false;
 
-  constructor(filePath: string) {
-    this.filePath = path.resolve(filePath);
+  constructor(dirPath: string) {
+    this.dirPath = path.resolve(dirPath);
   }
 
   async load(): Promise<void> {
-    try {
-      const raw = fs.readFileSync(this.filePath, "utf-8");
-      this.data = JSON.parse(raw) as FileData;
-    } catch (err: unknown) {
-      if ((err as NodeJS.ErrnoException).code === "ENOENT") {
-        this.data = {};
-        await this.flush();
-      } else {
-        throw err;
-      }
+    if (!fs.existsSync(this.dirPath)) {
+      fs.mkdirSync(this.dirPath, { recursive: true });
     }
-  }
 
-  getData(): FileData {
-    return this.data;
+    // Legacy migration: single seedorm.json → per-collection files
+    const legacyPath = path.join(this.dirPath, "seedorm.json");
+    if (fs.existsSync(legacyPath)) {
+      const raw = fs.readFileSync(legacyPath, "utf-8");
+      const legacy = JSON.parse(raw) as Record<string, Document[]>;
+      for (const [collection, docs] of Object.entries(legacy)) {
+        this.data.set(collection, docs);
+        this.dirty.add(collection);
+      }
+      await this.flush();
+      fs.unlinkSync(legacyPath);
+      return;
+    }
+
+    // Read per-collection files
+    const files = fs.readdirSync(this.dirPath).filter((f) => f.endsWith(".json"));
+    for (const file of files) {
+      const collection = file.slice(0, -5); // strip .json
+      const raw = fs.readFileSync(path.join(this.dirPath, file), "utf-8");
+      this.data.set(collection, JSON.parse(raw) as Document[]);
+    }
   }
 
   getCollection(name: string): Document[] {
-    if (!this.data[name]) {
-      this.data[name] = [];
+    if (!this.data.has(name)) {
+      this.data.set(name, []);
     }
-    return this.data[name];
+    return this.data.get(name)!;
   }
 
   hasCollection(name: string): boolean {
-    return name in this.data;
+    return this.data.has(name);
   }
 
   createCollection(name: string): void {
-    if (!this.data[name]) {
-      this.data[name] = [];
+    if (!this.data.has(name)) {
+      this.data.set(name, []);
+      this.dirty.add(name);
     }
   }
 
   dropCollection(name: string): void {
-    delete this.data[name];
+    this.data.delete(name);
+    this.dirty.delete(name);
+    const filePath = path.join(this.dirPath, `${name}.json`);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
   }
 
   listCollections(): string[] {
-    return Object.keys(this.data);
+    return Array.from(this.data.keys());
   }
 
-  markDirty(): void {
-    this.dirty = true;
+  markDirty(collection: string): void {
+    this.dirty.add(collection);
   }
 
   async flush(): Promise<void> {
+    const toWrite = new Set(this.dirty);
+    this.dirty.clear();
+
     this.writeQueue = this.writeQueue.then(async () => {
-      const dir = path.dirname(this.filePath);
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
+      for (const collection of toWrite) {
+        const docs = this.data.get(collection);
+        if (docs === undefined) continue;
+        await writeFileAtomic(
+          path.join(this.dirPath, `${collection}.json`),
+          JSON.stringify(docs),
+        );
       }
-      await writeFileAtomic(
-        this.filePath,
-        JSON.stringify(this.data, null, 2) + "\n",
-      );
-      this.dirty = false;
     });
     return this.writeQueue;
   }
 
   async flushIfDirty(): Promise<void> {
-    if (this.dirty) {
+    if (this.dirty.size > 0) {
       await this.flush();
     }
   }

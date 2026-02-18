@@ -64,15 +64,35 @@ export function createApiHandler(
             const limitParam = url.searchParams.get("limit");
             const offsetParam = url.searchParams.get("offset");
             const sortParam = url.searchParams.get("sort");
+            const searchParam = url.searchParams.get("search");
 
-            const opts: FindOptions = {};
-            if (filterParam) opts.filter = JSON.parse(filterParam) as FilterQuery;
-            if (limitParam) opts.limit = parseInt(limitParam, 10);
-            if (offsetParam) opts.offset = parseInt(offsetParam, 10);
-            if (sortParam) opts.sort = JSON.parse(sortParam) as Record<string, 1 | -1>;
+            // Fetch all matching docs (without pagination) for search + count
+            const findOpts: FindOptions = {};
+            if (filterParam) findOpts.filter = JSON.parse(filterParam) as FilterQuery;
+            if (sortParam) findOpts.sort = JSON.parse(sortParam) as Record<string, 1 | -1>;
 
-            const docs = await adapter.find(collection, opts);
-            const total = await adapter.count(collection, opts.filter);
+            let allDocs = await adapter.find(collection, findOpts);
+
+            // Apply text search across all string-coercible fields
+            if (searchParam) {
+              const q = searchParam.toLowerCase();
+              allDocs = allDocs.filter((doc) =>
+                Object.values(doc).some((v) => {
+                  if (v == null) return false;
+                  const s = typeof v === "string" ? v : JSON.stringify(v);
+                  return s.toLowerCase().includes(q);
+                }),
+              );
+            }
+
+            const total = allDocs.length;
+
+            // Apply pagination
+            const offset = offsetParam ? parseInt(offsetParam, 10) : 0;
+            const limit = limitParam ? parseInt(limitParam, 10) : undefined;
+            let docs = allDocs.slice(offset);
+            if (limit !== undefined) docs = docs.slice(0, limit);
+
             return json(res, 200, { data: docs, total });
           }
           case "POST": {
