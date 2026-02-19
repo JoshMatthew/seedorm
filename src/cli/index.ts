@@ -6,13 +6,15 @@ import { migrateUpCommand } from "./commands/migrate-up.js";
 import { migrateToCommand } from "./commands/migrate-to.js";
 import { studioCommand } from "./commands/studio.js";
 
+declare const SEEDORM_VERSION: string;
+
 export function createCLI(): Command {
   const program = new Command();
 
   program
     .name("seedorm")
     .description("Development-first ORM — start with JSON, migrate to PostgreSQL/MySQL")
-    .version("0.2.1");
+    .version(SEEDORM_VERSION);
 
   program
     .command("init")
