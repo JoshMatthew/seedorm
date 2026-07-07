@@ -1,11 +1,21 @@
 {
   "name": "seedorm",
-  "version": "0.3.2",
-	"homepage": "https://seedorm-website.vercel.app/",
-	"repository": { "type": "git", "url": "git+https://github.com/JoshMatthew/seedorm.git" },
-	"keywords": ["orm", "database", "json", "prototyping", "postgresql", "mysql"],
-	"description": "Development-first ORM — start with JSON, migrate to PostgreSQL/MySQL",
-	"type": "module",
+  "version": "0.3.3",
+  "homepage": "https://seedorm-website.vercel.app/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoshMatthew/seedorm.git"
+  },
+  "keywords": [
+    "orm",
+    "database",
+    "json",
+    "prototyping",
+    "postgresql",
+    "mysql"
+  ],
+  "description": "Development-first ORM — start with JSON, migrate to PostgreSQL/MySQL",
+  "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -48,8 +58,12 @@
     "mysql2": "^3.0.0"
   },
   "peerDependenciesMeta": {
-    "pg": { "optional": true },
-    "mysql2": { "optional": true }
+    "pg": {
+      "optional": true
+    },
+    "mysql2": {
+      "optional": true
+    }
   },
   "engines": {
     "node": ">=18"
